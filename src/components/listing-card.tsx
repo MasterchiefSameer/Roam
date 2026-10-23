@@ -56,16 +56,18 @@ export function ListingCard({
     onFavoriteToggle?.();
   };
 
+  const CardContainer = (onPress ? Pressable : View) as React.ComponentType<any>;
+
   return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={onPress}
-      className={`bg-surface-white rounded-3xl border border-border-gray overflow-hidden active:opacity-95 ${className}`}
+    <CardContainer
+      {...(onPress ? { onPress, accessibilityLabel: title } : {})}
+      className={`bg-surface-white rounded-3xl border border-border-gray overflow-hidden ${onPress ? 'active:opacity-95' : ''} ${className}`}
       style={style}
     >
       <View className="relative w-full h-[200px] bg-surface-gray">
         <Image
           source={{ uri: imageUri }}
+          style={{ width: '100%', height: '100%' }}
           className="w-full h-full"
           contentFit="cover"
           transition={300}
@@ -134,6 +136,6 @@ export function ListingCard({
           </ThemedText>
         </View>
       </View>
-    </Pressable>
+    </CardContainer>
   );
 }

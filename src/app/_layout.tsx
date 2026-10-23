@@ -10,6 +10,9 @@ import {
   PlusJakartaSans_700Bold,
   PlusJakartaSans_800ExtraBold,
 } from "@expo-google-fonts/plus-jakarta-sans";
+import { Ionicons, Feather } from "@expo/vector-icons";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AuthProvider } from "../context/auth-context";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,6 +23,8 @@ export default function RootLayout() {
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_700Bold,
     PlusJakartaSans_800ExtraBold,
+    ...Ionicons.font,
+    ...Feather.font,
   });
 
   useEffect(() => {
@@ -33,11 +38,15 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: "#F4F5F7" },
-      }}
-    />
+    <SafeAreaProvider>
+      <AuthProvider>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: "#F4F5F7" },
+          }}
+        />
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }

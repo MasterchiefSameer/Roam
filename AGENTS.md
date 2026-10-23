@@ -27,7 +27,7 @@ npx eas-cli@latest <cmd>    # EAS builds, submits, and updates (use instead of b
 
 Each tool has one job. Ask before moving a responsibility to a different tool.
 
-- **Auth:** Clerk is the source of truth. The app keeps its own custom auth screens. Set Clerk up through the Clerk CLI and use the Clerk MCP for current Expo patterns.
+- **Auth:** Clerk is the source of truth (custom auth screens in `src/app/(auth)/*`, currently running on a swappable mock session context at `src/context/auth-context.tsx`).
 - **Content:** Sanity (properties, hosts, policies, house rules). Studio is a standalone app in `studio/`. Schema deploys and content changes go through the Sanity MCP, and generated property copy uses Agent Actions.
 - **Exact constraints** (price, guests, type, amenities, pets, place): GROQ filters, with values always passed as params.
 - **Soft intent** (quiet, cozy, secluded): Dataset Embeddings via `text::semanticSimilarity()` inside `score()`.
@@ -36,6 +36,7 @@ Each tool has one job. Ask before moving a responsibility to a different tool.
 - **Answer text:** none generated. Answers show the stay's own fields and policy text word for word, with their source. No LLM runs in the app.
 - **Styling:** NativeWind v5 (Tailwind CSS v4) with `nativewind/metro` and split layered imports in `global.css`.
 - **Design System:** Design tokens live in `src/theme/` and `@theme` variables in `global.css`. Shared components live in `src/components/`. Typography uses `Plus Jakarta Sans`. Icons use `@expo/vector-icons`.
+- **Navigation:** Onboarding carousel at `src/app/index.tsx`, auth stack at `src/app/(auth)/` (`sign-up`, `verify`, `sign-in`), and authenticated home at `src/app/home.tsx`.
 - **Analytics:** PostHog, identified through Clerk.
 
 ## Rules
