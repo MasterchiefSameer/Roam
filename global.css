@@ -1,0 +1,49 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+
+@import "nativewind/theme";
+
+@theme {
+  --color-primary-yellow: #FFC629;
+  --color-lavender: #C9B4FF;
+  --color-text-primary: #0B0B1A;
+  --color-text-secondary: #6B7280;
+  --color-surface-white: #FFFFFF;
+  --color-surface-gray: #F4F5F7;
+  --color-border-gray: #E5E7EB;
+
+  --color-status-success: #059669;
+  --color-status-success-bg: #ECFDF5;
+  --color-status-success-border: #A7F3D0;
+  --color-status-error: #DC2626;
+  --color-status-error-bg: #FEF2F2;
+  --color-status-error-border: #FECACA;
+
+  --color-badge-favorite: #B45309;
+  --color-badge-favorite-bg: #FEF3C7;
+  --color-badge-favorite-border: #FDE68A;
+  --color-badge-discount: #9333EA;
+  --color-badge-discount-bg: #F3E8FF;
+  --color-badge-discount-border: #E9D5FF;
+  --color-badge-superhost: #4F46E5;
+  --color-badge-superhost-bg: #EEF2FF;
+  --color-badge-superhost-border: #C7D2FE;
+  --color-badge-new: #059669;
+  --color-badge-new-bg: #ECFDF5;
+  --color-badge-new-border: #A7F3D0;
+
+  --radius-pill: 9999px;
+  --radius-2xl: 24px;
+  --radius-xl: 20px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 4px;
+
+  --font-display: PlusJakartaSans_700Bold;
+  --font-heading: PlusJakartaSans_700Bold;
+  --font-body: PlusJakartaSans_400Regular;
+  --font-medium: PlusJakartaSans_500Medium;
+  --font-semibold: PlusJakartaSans_600SemiBold;
+}

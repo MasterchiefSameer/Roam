@@ -1,57 +1,36 @@
-import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
+import { Text, TextProps } from 'react-native';
+import { TypographyVariant } from '../theme';
 
-import { Fonts, ThemeColor } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-
-export type ThemedTextProps = TextProps & {
-  type?: 'default' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code';
-  themeColor?: ThemeColor;
-};
-
-export function ThemedText({ style, type = 'default', themeColor, ...rest }: ThemedTextProps) {
-  const theme = useTheme();
-
-  return <Text style={[{ color: theme[themeColor ?? 'text'] }, styles[type], style]} {...rest} />;
+export interface ThemedTextProps extends TextProps {
+  variant?: TypographyVariant;
+  color?: string;
+  className?: string;
 }
 
-const styles = StyleSheet.create({
-  small: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: 500,
-  },
-  smallBold: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: 700,
-  },
-  default: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: 500,
-  },
-  title: {
-    fontSize: 48,
-    fontWeight: 600,
-    lineHeight: 52,
-  },
-  subtitle: {
-    fontSize: 32,
-    lineHeight: 44,
-    fontWeight: 600,
-  },
-  link: {
-    lineHeight: 30,
-    fontSize: 14,
-  },
-  linkPrimary: {
-    lineHeight: 30,
-    fontSize: 14,
-    color: '#3c87f7',
-  },
-  code: {
-    fontFamily: Fonts.mono,
-    fontWeight: Platform.select({ android: 700 }) ?? 500,
-    fontSize: 12,
-  },
-});
+const variantClasses: Record<TypographyVariant, string> = {
+  display: 'text-[56px] leading-[58px] font-display text-text-primary tracking-tight',
+  heading: 'text-[28px] leading-[34px] font-heading text-text-primary tracking-tight',
+  title: 'text-[20px] leading-[26px] font-semibold text-text-primary',
+  body: 'text-[16px] leading-[24px] font-body text-text-secondary',
+  caption: 'text-[14px] leading-[20px] font-medium text-text-secondary',
+  button: 'text-[17px] leading-[22px] font-semibold text-text-primary',
+};
+
+export function ThemedText({
+  variant = 'body',
+  color,
+  style,
+  className = '',
+  children,
+  ...props
+}: ThemedTextProps) {
+  return (
+    <Text
+      className={`${variantClasses[variant]} ${className}`}
+      style={[color ? { color } : undefined, style]}
+      {...props}
+    >
+      {children}
+    </Text>
+  );
+}
