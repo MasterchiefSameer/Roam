@@ -12,3 +12,4 @@ export * from './listing-card';
 export * from './policy-card';
 export * from './profile-row';
 export * from './liquid-glass-tab-bar';
+export * from './pressable-scale';

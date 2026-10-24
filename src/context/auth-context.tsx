@@ -38,6 +38,7 @@ export interface User {
   fullName: string;
   email: string;
   avatarUrl?: string;
+  isGoogleUser?: boolean;
 }
 
 export interface AuthContextType {
@@ -102,11 +103,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       primaryEmail.split('@')[0] ||
       'Traveler';
 
+    const isGoogleUser =
+      clerkUser.externalAccounts?.some(
+        (acc: any) =>
+          acc.provider === 'google' ||
+          acc.verification?.strategy === 'oauth_google' ||
+          acc.identification?.provider === 'google'
+      ) || false;
+
     return {
       id: clerkUser.id,
       fullName,
       email: primaryEmail,
       avatarUrl: clerkUser.imageUrl,
+      isGoogleUser,
     };
   }, [clerkUser]);
 

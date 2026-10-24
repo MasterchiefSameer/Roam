@@ -36,7 +36,8 @@ Each tool has one job. Ask before moving a responsibility to a different tool.
 - **Answer text:** none generated. Answers show the stay's own fields and policy text word for word, with their source. No LLM runs in the app.
 - **Styling:** NativeWind v5 (Tailwind CSS v4) with `nativewind/metro` and split layered imports in `global.css`.
 - **Design System:** Design tokens live in `src/theme/` and `@theme` variables in `global.css`. Shared components live in `src/components/`. Typography uses `Plus Jakarta Sans`. Icons use `@expo/vector-icons`.
-- **Navigation:** Onboarding carousel at `src/app/index.tsx`, auth stack at `src/app/(auth)/` (`sign-up`, `verify`, `sign-in`), and authenticated home at `src/app/home.tsx`.
+- **Navigation:** Onboarding carousel at `src/app/index.tsx`, auth stack at `src/app/(auth)/`, and tabs navigator at `src/app/(tabs)/` via `expo-router` `Tabs` (`home`, `search`, `trips`, `profile`) with Ink tint (`#0B0B1A`), white surface, and gold indicator.
+- **Data:** Local stays in `src/data/stays.ts` with categories (cabins, beach, city, villas), prices, ratings, and amenity tags.
 - **Analytics:** PostHog, identified through Clerk.
 
 ## Rules

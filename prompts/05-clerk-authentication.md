@@ -24,17 +24,24 @@ Replace the mock authentication with real Clerk authentication using `@clerk/exp
 5. **Email Sign-In Flow**:
    - Supports both password sign-in (`signIn.password({ emailAddress, password })`) and email OTP code sign-in (`sendSignInCode(email)` -> `signIn.emailCode.sendCode({ emailAddress })` -> `/(auth)/verify` -> `signIn.emailCode.verifyCode({ code })` -> `signIn.finalize()`).
    - On completion, `signIn.finalize()` sets the active session and navigates to `/home`.
-6. **Google OAuth via Clerk Browser SSO (`useSSO`)**:
+6. **Google OAuth via Clerk Browser SSO (`useSSO`) & Cross-Platform Callbacks**:
    - Uses `useSSO()` from `@clerk/expo` with `strategy: 'oauth_google'`.
-   - On button press, calls `startSSOFlow({ strategy: 'oauth_google' })`.
-   - When `createdSessionId` is returned, calls `setActive({ session: createdSessionId })` and routes to `/home`.
-   - Gracefully swallows user cancellation without showing error alert.
-   - Deep-link scheme `"scheme": "roam"` is already set in `app.json`.
-7. **Protected Routes & Route Guards**:
+   - Cross-platform `getOAuthRedirectUrl()` helper resolves:
+     - Web: `http://localhost:8081/sso-callback`
+     - Mobile (Expo Go): `exp://${hostUri}/--/sso-callback`
+     - Standalone Builds: `roam://sso-callback`
+   - All redirect URLs whitelisted via Clerk Backend API (`https://api.clerk.com/v1/redirect_urls`).
+   - Dedicated landing route in `src/app/sso-callback.tsx` with `<AuthenticateWithRedirectCallback>` on web and session verification before navigating to `/home` on native.
+   - `useWarmUpBrowser` guarded by `Platform.OS === 'android'` to avoid unavailability errors on web/iOS.
+   - Dedicated `googleLoading` state inside the Google button for clear tap feedback.
+   - Identifies Google OAuth sign-ins via `clerkUser.externalAccounts` and exposes `user.isGoogleUser`.
+7. **Apple Sign-In Removed**:
+   - Removed Apple login buttons and mock handlers from `sign-in.tsx`, `sign-up.tsx`, and `auth-context.tsx` to streamline the authentication experience.
+8. **Protected Routes & Route Guards**:
    - Layout guard in `src/app/(auth)/_layout.tsx`: If `isLoaded && isSignedIn`, redirect to `/home` (prevents authenticated users from seeing auth screens).
    - Screen guard in `src/app/home.tsx`: If `isLoaded && !isSignedIn`, redirect to `/(auth)/sign-in` (protects private app screens).
    - Handle loading state with `isLoaded` before checking `isSignedIn` to avoid flashing wrong screens.
-8. **Sign-out Flow**:
+9. **Sign-out Flow**:
    - Calls `signOut()` from `useAuth()` / `useClerk()`.
    - Clears tokens from SecureStore and redirects to Onboarding (`/`).
 
