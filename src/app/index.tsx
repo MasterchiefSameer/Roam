@@ -10,9 +10,10 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Ionicons, Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, Redirect } from 'expo-router';
 import { colors } from '../theme';
 import { ThemedText } from '../components';
+import { useAuth } from '../context/auth-context';
 
 interface SlideData {
   id: string;
@@ -48,11 +49,16 @@ const SLIDES: SlideData[] = [
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { isSignedIn, isLoaded } = useAuth();
   const insets = useSafeAreaInsets();
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
+
+  if (isLoaded && isSignedIn) {
+    return <Redirect href="/home" />;
+  }
 
   const heroHeight = Math.round(windowHeight * 0.58);
 

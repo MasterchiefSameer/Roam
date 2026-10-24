@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -11,19 +11,32 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 import { colors } from '../../theme';
 import { ThemedText } from '../../components';
 import { useAuth } from '../../context/auth-context';
 
+function useWarmUpBrowser() {
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    void WebBrowser.warmUpAsync();
+    return () => {
+      void WebBrowser.coolDownAsync();
+    };
+  }, []);
+}
+
 export default function SignUpScreen() {
+  useWarmUpBrowser();
   const router = useRouter();
-  const { signUp, signInWithSocial } = useAuth();
+  const { signUp, signInWithGoogle } = useAuth();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSignUp = async () => {
@@ -39,8 +52,12 @@ export default function SignUpScreen() {
     setError(null);
     setLoading(true);
     try {
-      await signUp(fullName.trim() || 'Guest User', email.trim(), password);
-      router.push('/(auth)/verify');
+      const res = await signUp(fullName.trim() || 'Traveler', email.trim(), password);
+      if (res.success) {
+        router.push('/(auth)/verify');
+      } else {
+        setError(res.error || 'Failed to create account. Please try again.');
+      }
     } catch {
       setError('Failed to create account. Please try again.');
     } finally {
@@ -48,13 +65,20 @@ export default function SignUpScreen() {
     }
   };
 
-  const handleSocialAuth = async (provider: 'google' | 'apple') => {
-    setLoading(true);
+  const handleGoogleSignIn = async () => {
+    setError(null);
+    setGoogleLoading(true);
     try {
-      await signInWithSocial(provider);
-      router.replace('/home');
+      const res = await signInWithGoogle();
+      if (res.success) {
+        router.replace('/home');
+      } else if (!res.cancelled) {
+        setError(res.error || 'Google sign-in failed. Please try again.');
+      }
+    } catch {
+      setError('An error occurred during Google sign-in.');
     } finally {
-      setLoading(false);
+      setGoogleLoading(false);
     }
   };
 
@@ -208,34 +232,30 @@ export default function SignUpScreen() {
               <View className="flex-1 h-[1px] bg-border-gray" />
             </View>
 
-            {/* Social Buttons */}
+            {/* Google Button */}
             <View className="gap-3 mt-4">
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Continue with Google"
-                disabled={loading}
-                onPress={() => handleSocialAuth('google')}
+                disabled={loading || googleLoading}
+                onPress={handleGoogleSignIn}
                 className="bg-surface-white rounded-full py-3.5 px-6 border border-border-gray flex-row items-center justify-center gap-3 active:opacity-80 active:scale-[0.985] shadow-sm"
               >
-                <Ionicons name="logo-google" size={19} color="#EA4335" />
-                <ThemedText variant="button" className="font-semibold text-[15px] text-text-primary">
-                  Continue with Google
-                </ThemedText>
-              </Pressable>
-
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Continue with Apple"
-                disabled={loading}
-                onPress={() => handleSocialAuth('apple')}
-                className="bg-surface-white rounded-full py-3.5 px-6 border border-border-gray flex-row items-center justify-center gap-3 active:opacity-80 active:scale-[0.985] shadow-sm"
-              >
-                <Ionicons name="logo-apple" size={21} color="#000000" />
-                <ThemedText variant="button" className="font-semibold text-[15px] text-text-primary">
-                  Continue with Apple
-                </ThemedText>
+                {googleLoading ? (
+                  <ActivityIndicator size="small" color={colors.textPrimary} />
+                ) : (
+                  <>
+                    <Ionicons name="logo-google" size={19} color="#EA4335" />
+                    <ThemedText variant="button" className="font-semibold text-[15px] text-text-primary">
+                      Continue with Google
+                    </ThemedText>
+                  </>
+                )}
               </Pressable>
             </View>
+
+            {/* Clerk Bot Protection Mount */}
+            <View nativeID="clerk-captcha" />
           </View>
 
           {/* Footer Sign-in Link */}

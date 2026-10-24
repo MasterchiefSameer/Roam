@@ -27,7 +27,7 @@ npx eas-cli@latest <cmd>    # EAS builds, submits, and updates (use instead of b
 
 Each tool has one job. Ask before moving a responsibility to a different tool.
 
-- **Auth:** Clerk is the source of truth (custom auth screens in `src/app/(auth)/*`, currently running on a swappable mock session context at `src/context/auth-context.tsx`).
+- **Auth:** Clerk is the live source of truth (custom auth screens in `src/app/(auth)/*` wired via `@clerk/expo` and `expo-secure-store` token cache in `src/context/auth-context.tsx`). Supports email sign-up/in with 6-digit verification code and Google OAuth SSO.
 - **Content:** Sanity (properties, hosts, policies, house rules). Studio is a standalone app in `studio/`. Schema deploys and content changes go through the Sanity MCP, and generated property copy uses Agent Actions.
 - **Exact constraints** (price, guests, type, amenities, pets, place): GROQ filters, with values always passed as params.
 - **Soft intent** (quiet, cozy, secluded): Dataset Embeddings via `text::semanticSimilarity()` inside `score()`.

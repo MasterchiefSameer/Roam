@@ -17,7 +17,7 @@ import { useAuth } from '../../context/auth-context';
 
 export default function VerifyScreen() {
   const router = useRouter();
-  const { pendingEmail, verifyEmail } = useAuth();
+  const { pendingEmail, verifyEmail, resendVerificationCode } = useAuth();
 
   const [digits, setDigits] = useState(['', '', '', '', '', '']);
   const [activeCell, setActiveCell] = useState(0);
@@ -70,7 +70,7 @@ export default function VerifyScreen() {
       if (result.success) {
         router.replace('/home');
       } else {
-        setError(result.error || 'Invalid code. Try entering 424242.');
+        setError(result.error || 'Invalid code. Please try again or resend.');
       }
     } catch {
       setError('Verification failed. Please try again.');
@@ -79,10 +79,15 @@ export default function VerifyScreen() {
     }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (timer === 0) {
-      setTimer(45);
       setError(null);
+      const res = await resendVerificationCode();
+      if (res.success) {
+        setTimer(45);
+      } else {
+        setError(res.error || 'Failed to resend code. Please try again.');
+      }
     }
   };
 
@@ -169,7 +174,7 @@ export default function VerifyScreen() {
             </View>
 
             {/* Clerk Test Code Hint */}
-            <View className="bg-surface-gray rounded-xl p-3 mb-8 flex-row items-center justify-between">
+            {/* <View className="bg-surface-gray rounded-xl p-3 mb-8 flex-row items-center justify-between">
               <ThemedText variant="caption" color={colors.textSecondary} className="text-xs">
                 Clerk mock test code:
               </ThemedText>
@@ -183,7 +188,7 @@ export default function VerifyScreen() {
                   424242 (Tap to fill)
                 </ThemedText>
               </Pressable>
-            </View>
+            </View> */}
 
             {/* Verify and Continue Primary Button */}
             <Pressable

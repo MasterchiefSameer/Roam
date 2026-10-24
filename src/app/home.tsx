@@ -3,22 +3,35 @@ import {
   View,
   ScrollView,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, Redirect } from 'expo-router';
 import { colors } from '../theme';
 import { ThemedText, ListingCard, Badge } from '../components';
 import { useAuth } from '../context/auth-context';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { user, signOut } = useAuth();
+  const { user, isSignedIn, isLoaded, signOut } = useAuth();
 
   const handleSignOut = async () => {
     await signOut();
     router.replace('/');
   };
+
+  if (!isLoaded) {
+    return (
+      <SafeAreaView style={{ flex: 1 }} className="flex-1 bg-surface-gray items-center justify-center">
+        <ActivityIndicator size="large" color={colors.textPrimary} />
+      </SafeAreaView>
+    );
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/(auth)/sign-in" />;
+  }
 
   const displayName = user?.fullName || 'Traveler';
   const displayEmail = user?.email || 'guest@example.com';
@@ -65,7 +78,7 @@ export default function HomeScreen() {
               </View>
             </View>
 
-            <Badge label="Mock Session" variant="superhost" />
+            <Badge label="Clerk Session" variant="superhost" />
           </View>
 
           <View className="h-[1px] bg-border-gray my-1" />
